@@ -1,0 +1,35 @@
+/*
+     Scanner sc = new Scanner(System.in);
+        System.out.print("Vertices : ");
+        int vertices = sc.nextInt();
+        System.out.print("Edges : ");
+        int edges = sc.nextInt();
+        int matrix[][] = new int[vertices][edges];
+
+        for (int i = 0; i < edges; i++) {
+            System.out.print("pair" + (i + 1) + ": ");
+            int fv = sc.nextInt();
+            int sv = sc.nextInt();
+            matrix[fv][sv] = 1;
+            matrix[sv][fv] = 1;
+
+        }
+    //Input Utha Lo Yaha Se
+    
+    GraphUsingMap g = new GraphUsingMap();
+        g.addVertex("A");
+        g.addVertex("B");
+        g.addVertex("C");
+        g.addVertex("D");
+        g.addVertex("E");
+        g.addVertex("F");
+
+        g.addEdge("A", "B", 1);
+        g.addEdge("A", "D", 1);
+        g.addEdge("B", "C", 1);
+        g.addEdge("C", "D", 1);
+        g.addEdge("D", "E", 1);
+        g.addEdge("E", "F", 1);
+        g.addEdge("B", "D", 1);
+
+ */
