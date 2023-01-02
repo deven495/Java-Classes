@@ -186,7 +186,7 @@ public class GraphUsingMap {
 
     }
 
-    public boolean IsCyclic() {
+    public boolean isCyclic() {
         HashSet<String> processed = new HashSet<>();
         Queue<Pair> q = new LinkedList<>();
         ArrayList<String> list = new ArrayList<>(vtxMap.keySet());
@@ -223,7 +223,7 @@ public class GraphUsingMap {
 
     }
 
-    public boolean IsConnected() {
+    public boolean isConnected() {
         int flag = 0;
         HashSet<String> processed = new HashSet<>();
         Queue<Pair> q = new LinkedList<>();
@@ -244,7 +244,7 @@ public class GraphUsingMap {
             while (!q.isEmpty()) {
                 Pair x = q.poll();
                 if (processed.contains(x.vName)) {
-                    return true;
+                    continue;
                 }
                 processed.add(x.vName);
                 Nbrs nbr = vtxMap.get(x.vName);
@@ -262,6 +262,51 @@ public class GraphUsingMap {
         }
 
         return true;
+
+    }
+
+    public boolean isTree() {
+        return !isCyclic() && isConnected();
+    }
+
+    public ArrayList<ArrayList<String>> getCC() {
+        ArrayList<ArrayList<String>> ans = new ArrayList<>();
+        HashSet<String> processed = new HashSet<>();
+        Queue<Pair> q = new LinkedList<>();
+        ArrayList<String> list = new ArrayList<>(vtxMap.keySet());
+        for (String string : list) {
+            if (processed.contains(string)) {
+                continue;
+            }
+            ArrayList<String> subList = new ArrayList<>();
+            Pair p = new Pair();
+            p.vName = string;
+            p.psf = string;
+
+            q.add(p);
+            while (!q.isEmpty()) {
+                Pair x = q.poll();
+                if (processed.contains(x.vName)) {
+                    continue;
+                }
+                subList.add(x.vName);
+                processed.add(x.vName);
+                Nbrs nbr = vtxMap.get(x.vName);
+                ArrayList<String> list2 = new ArrayList<>(nbr.nbrsMap.keySet());
+
+                for (String str2 : list2) {
+                    if (!processed.contains(str2)) {
+                        Pair p2 = new Pair();
+                        p2.vName = str2;
+                        p2.psf = x.vName + str2;
+                        q.add(p2);
+                    }
+                }
+            }
+            ans.add(subList);
+        }
+
+        return ans;
 
     }
 
