@@ -223,5 +223,46 @@ public class GraphUsingMap {
 
     }
 
-    // hello
+    public boolean IsConnected() {
+        int flag = 0;
+        HashSet<String> processed = new HashSet<>();
+        Queue<Pair> q = new LinkedList<>();
+        ArrayList<String> list = new ArrayList<>(vtxMap.keySet());
+        for (String string : list) {
+            if (processed.contains(string)) {
+                continue;
+            }
+            flag++;
+            if (flag >= 2) {
+                return false;
+            }
+            Pair p = new Pair();
+            p.vName = string;
+            p.psf = string;
+            q.add(p);
+
+            while (!q.isEmpty()) {
+                Pair x = q.poll();
+                if (processed.contains(x.vName)) {
+                    return true;
+                }
+                processed.add(x.vName);
+                Nbrs nbr = vtxMap.get(x.vName);
+                ArrayList<String> list2 = new ArrayList<>(nbr.nbrsMap.keySet());
+
+                for (String string2 : list2) {
+                    if (!processed.contains(string2)) {
+                        Pair p2 = new Pair();
+                        p2.vName = string2;
+                        p2.psf = x.vName + string2;
+                        q.add(p2);
+                    }
+                }
+            }
+        }
+
+        return true;
+
+    }
+
 }
