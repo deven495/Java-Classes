@@ -7,8 +7,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 
-public class GraphUsingMap {
-    private class Nbrs {
+class GraphUsingMap {
+    class Nbrs {
         HashMap<String, Integer> nbrsMap = new HashMap<>();
 
     }
@@ -308,58 +308,6 @@ public class GraphUsingMap {
 
         return ans;
 
-    }
-
-    public class DisJointSet {
-        HashMap<String, Node> map = new HashMap<>();
-
-        private class Node {
-            String data;
-            int rank;
-            Node parent;
-
-        }
-
-        public void create(String value) {
-            Node nn = new Node();
-            nn.data = value;
-            nn.rank = 0;
-            nn.parent = nn;
-        }
-
-        public void union(String value1, String value2) {
-            Node n1 = map.get(value1);
-            Node n2 = map.get(value2);
-
-            Node re1 = find(n1);
-            Node re2 = find(n2);
-
-            if (re1.data.equals(re2.data)) {
-                return;
-            } else {
-                if (re1.rank == re2.rank) {
-                    re2.parent = re1;
-                    re1.rank += 1;
-                } else if (re1.rank > re2.rank) {
-                    re2.parent = re1;
-                } else {
-                    re1.parent = re2;
-                }
-            }
-
-        }
-
-        public String find(String value) {
-            return find(map.get(value)).data;
-        }
-
-        private Node find(Node node) {
-            if (node == node.parent) {
-                return node;
-            }
-            Node rr = find(node.parent);
-            return rr;
-        }
     }
 
 }
