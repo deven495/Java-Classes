@@ -27,6 +27,7 @@ public class prac {
         g.addVertex("C");
         g.addVertex("D");
         g.addVertex("E");
+        
 
         g.addEdge("A", "B", 2);
         g.addEdge("C", "D", 1);
