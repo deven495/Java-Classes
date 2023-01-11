@@ -1,13 +1,16 @@
 package Graphs;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 
-class GraphUsingMap {
+import Priority_Queue.PriorityQueueMinHeap;
+
+public class GraphUsingMap {
     class Nbrs {
         HashMap<String, Integer> nbrsMap = new HashMap<>();
 
@@ -310,4 +313,148 @@ class GraphUsingMap {
 
     }
 
+    public class DisJointSet {
+        HashMap<String, Node> map = new HashMap<>();
+
+        private class Node {
+            String data;
+            int rank;
+            Node parent;
+
+        }
+
+        public void create(String value) {
+            Node nn = new Node();
+            nn.data = value;
+            nn.rank = 0;
+            nn.parent = nn;
+        }
+
+        public void union(String value1, String value2) {
+            Node n1 = map.get(value1);
+            Node n2 = map.get(value2);
+
+            Node re1 = find(n1);
+            Node re2 = find(n2);
+
+            if (re1.data.equals(re2.data)) {
+                return;
+            } else {
+                if (re1.rank == re2.rank) {
+                    re2.parent = re1;
+                    re1.rank += 1;
+                } else if (re1.rank > re2.rank) {
+                    re2.parent = re1;
+                } else {
+                    re1.parent = re2;
+                }
+            }
+
+        }
+
+        public String find(String value) {
+            return find(map.get(value)).data;
+        }
+
+        private Node find(Node node) {
+            if (node == node.parent) {
+                return node;
+            }
+            Node rr = find(node.parent);
+            node.parent = rr;
+            return rr;
+        }
+
+        private class Edgepair {
+            String v1;
+            String v2;
+            int cost;
+        }
+
+        public ArrayList<Edgepair> getAllEdges() {
+            ArrayList<Edgepair> edges = new ArrayList<>();
+            for (String vName : vtxMap.keySet()) {
+                Nbrs nbr = vtxMap.get(vName);
+                for (String string : nbr.nbrsMap.keySet()) {
+                    Edgepair ep = new Edgepair();
+                    ep.v1 = vName;
+                    ep.v2 = string;
+                    ep.cost = nbr.nbrsMap.get(string);
+                    edges.add(ep);
+                }
+            }
+            return edges;
+        }
+
+        public void kruskal() {
+            ArrayList<Edgepair> edges = getAllEdges();
+            Collections.sort(edges, (a, b) -> (a.cost - b.cost));
+            for (String Vname : vtxMap.keySet()) {
+                create(Vname);
+            }
+            for (Edgepair ep : edges) {
+                String r1 = find(ep.v1);
+                String r2 = find(ep.v2);
+
+                if (r1.equals(r2)) {
+                    continue;
+                } else {
+                    union(ep.v1, ep.v2);
+                }
+
+            }
+        }
+
+    }
+
+    private class PrimsPair {
+        String vName;
+        String acqName;
+        int cost;
+
+    }
+
+    public GraphUsingMap prims() throws HeapEmptyException, Priority_Queue.HeapEmptyException {
+        GraphUsingMap mst = new GraphUsingMap();
+        HashMap<String, PrimsPair> map = new HashMap<>();
+
+        PriorityQueueMinHeap<PrimsPair> heap = new PriorityQueueMinHeap<PrimsPair>();
+
+        for (String key : vtxMap.keySet()) {
+            PrimsPair np = new PrimsPair();
+            np.vName = key;
+            np.acqName = null;
+            np.cost = Integer.MAX_VALUE;
+
+            heap.insert(np, np.cost);
+            map.put(key, np);
+
+        }
+        while (!heap.isEmpty()) {
+            PrimsPair rp = heap.removeMin();
+            map.remove(rp.vName);
+
+            if (rp.acqName == null) {
+                mst.addVertex(rp.vName);
+            } else {
+                mst.addVertex(rp.vName);
+                mst.addEdge(rp.vName, rp.acqName, rp.cost);
+            }
+            for (String nbr : vtxMap.get(rp.vName).nbrsMap.keySet()) {
+                if (map.containsKey(nbr)) {
+                    int oc = map.get(nbr).cost;
+                    int nc = vtxMap.get(rp.vName).nbrsMap.get(nbr);
+
+                    if (nc < oc) {
+                        PrimsPair gp = map.get(nbr);
+                        gp.acqName = rp.vName;
+                        gp.cost = nc;
+
+                    }
+                }
+            }
+        }
+
+        return mst;
+    }
 }

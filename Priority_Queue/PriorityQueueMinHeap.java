@@ -9,8 +9,6 @@ public class PriorityQueueMinHeap<T> {
         heap = new ArrayList<>();
     }
 
-    // Methods
-
     public boolean isEmpty() {
         return (size() == 0);
     }

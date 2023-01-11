@@ -1,22 +1,16 @@
-import java.util.ArrayList;
+import StackUsingArrays.Stack;
 
 public class prac {
-    public static void main(String[] args) {
-        ArrayList<Integer> list = new ArrayList<Integer>();
-        list.add(1);
-        list.add(2);
-        int start = 0;
-        int end = list.size() - 1;
-        System.out.print(list);
-        while (start >= end) {
-            if (list.get(start) != list.get(end)) {
-                System.out.println("false");
-            } else {
-                start++;
-                end--;
-            }
-        }
-        System.out.println("true");
 
+    public static void main(String[] args) throws Exception {
+        Stack s = new Stack();
+        for (int i = 1; i <= 10; i++) {
+            s.push(i);
+        }
+        // s.print();
+        for (int i = 0; i < 10; i++) {
+            s.print();
+            s.pop();
+        }
     }
 }
