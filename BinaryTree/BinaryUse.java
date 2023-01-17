@@ -204,7 +204,7 @@ public class BinaryUse {
                 q.add(rightBacha);
             }
         }
-
+        sc.close();
         return root;
     }
 
