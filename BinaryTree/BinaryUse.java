@@ -186,21 +186,21 @@ public class BinaryUse {
         Queue<BinaryTreeNode<Integer>> q = new LinkedList<>();
         q.add(root);
         while (!q.isEmpty()) {
-            BinaryTreeNode<Integer> child = q.poll();
-            System.out.print("Enter left Child of " + child.data + " : ");
+            BinaryTreeNode<Integer> parent = q.poll();
+            System.out.print("Enter left Child of " + parent.data + " : ");
             int leftChild = sc.nextInt();
             if (leftChild >= 0) {
 
                 BinaryTreeNode<Integer> leftBacha = new BinaryTreeNode<Integer>(leftChild);
-                child.left = leftBacha;
+                parent.left = leftBacha;
                 q.add(leftBacha);
             }
-            System.out.print("Enter right Child of " + child.data + " : ");
+            System.out.print("Enter right Child of " + parent.data + " : ");
             int rightChild = sc.nextInt();
             if (rightChild >= 0) {
 
                 BinaryTreeNode<Integer> rightBacha = new BinaryTreeNode<Integer>(rightChild);
-                child.right = rightBacha;
+                parent.right = rightBacha;
                 q.add(rightBacha);
             }
         }
@@ -234,5 +234,70 @@ public class BinaryUse {
         root.left = takeInput(sc);
         root.right = takeInput(sc);
         return root;
+    }
+
+    public static BinaryTreeNode<Integer> takeInputLevelWise2(boolean isRoot, int rootData, boolean isLeftChild) {
+        if (isRoot) {
+            System.out.print("Enter rootData : ");
+        } else {
+            if (isLeftChild) {
+                System.out.print("Enter LeftChild of " + rootData + " : ");
+            } else {
+                System.out.print("Enter RightChild of " + rootData + " : ");
+            }
+        }
+        Scanner sc = new Scanner(System.in);
+        int rootData1 = sc.nextInt();
+        if (rootData1 == -1) {
+            return null;
+        }
+        BinaryTreeNode<Integer> root = new BinaryTreeNode<Integer>(rootData1);
+        BinaryTreeNode<Integer> leftChild = takeInputLevelWise2(false, rootData1, true);
+        BinaryTreeNode<Integer> rightChild = takeInputLevelWise2(false, rootData1, false);
+        root.left = leftChild;
+        root.right = rightChild;
+        return root;
+    }
+
+    public static int numOfLeafs(BinaryTreeNode<Integer> root) {
+        if (root == null)
+            return 0;
+        if (root.left == null && root.right == null)
+            return 1;
+        return numOfLeafs(root.left) + numOfLeafs(root.right);
+    }
+
+    public static void printNodesAtDepthK(BinaryTreeNode<Integer> root, int k) {
+        if (root == null) {
+            return;
+        }
+        if (k == 0) {
+            System.out.print(root.data + " ");
+        }
+        printNodesAtDepthK(root.left, k - 1);
+        printNodesAtDepthK(root.right, k - 1);
+    }
+
+    public static BinaryTreeNode<Integer> removeLeafs(BinaryTreeNode<Integer> root) {
+        if (root == null) {
+            return null;
+        }
+        if (root.left == null && root.right == null) {
+            return null;
+        }
+        root.left = removeLeafs(root.left);
+        root.right = removeLeafs(root.right);
+        return root;
+    }
+
+    public static void mirror(BinaryTreeNode<Integer> root) {
+        if (root == null) {
+            return;
+        }
+        mirror(root.left);
+        mirror(root.right);
+        BinaryTreeNode<Integer> temp = root.left;
+        root.left = root.right;
+        root.right = temp;
     }
 }

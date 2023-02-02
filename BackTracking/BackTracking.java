@@ -2,7 +2,7 @@ package BackTracking;
 
 public class BackTracking {
 
-    public void queenPermu(boolean[] boxes, int qpsf, int tq, String ans) {
+    public static void queenPermu(boolean[] boxes, int qpsf, int tq, String ans) {
         if (qpsf == tq) {
             System.out.println(ans);
             return;
@@ -14,5 +14,17 @@ public class BackTracking {
                 boxes[i] = false;
             }
         }
+    }
+
+    public static void coinChange1(int denom[], int idx, int amount, String ans) {
+        if (amount == 0) {
+            System.out.println(ans);
+            return;
+        }
+        if (amount < 0 || idx == denom.length) {
+            return;
+        }
+        coinChange1(denom, idx, amount - denom[idx], ans + denom[idx]);
+        coinChange1(denom, idx + 1, amount, ans);
     }
 }
