@@ -1,5 +1,7 @@
 package BinaryTree;
 
+import java.util.ArrayList;
+
 public class BinarySearchTree {
     private BinaryTreeNode<Integer> root;
 
@@ -55,14 +57,6 @@ public class BinarySearchTree {
         return root;
     }
 
-    private int leftMaximum(BinaryTreeNode<Integer> root) {
-        if (root == null) {
-            return 0;
-        }
-        return Math.max(root.data, Math.max(leftMaximum(root.left), leftMaximum(root.right)));
-
-    }
-
     public void insertNode(int target) {
         insertNodeHelper(root, target);
         return;
@@ -98,5 +92,112 @@ public class BinarySearchTree {
         System.out.println(rootStr);
         printBST(root.left);
         printBST(root.right);
+    }
+
+    public static ArrayList<Integer> rootToNodePath(BinaryTreeNode<Integer> root, int target) {
+        if (root == null) {
+            return null;
+        }
+        if (root.data == target) {
+            ArrayList<Integer> temp = new ArrayList<>();
+            temp.add(root.data);
+            return temp;
+        }
+        ArrayList<Integer> leftSe = rootToNodePath(root.left, target);
+        ArrayList<Integer> rightSe = rootToNodePath(root.right, target);
+        if (leftSe != null) {
+            leftSe.add(root.data);
+            return leftSe;
+        } else if (rightSe != null) {
+            rightSe.add(root.data);
+            return rightSe;
+        } else {
+            return null;
+        }
+    }
+
+    public static pair<Boolean, pair<Integer, Integer>> isBSToptimised(BinaryTreeNode<Integer> root) {
+        if (root == null) {
+            pair<Boolean, pair<Integer, Integer>> object = new pair<>();
+            object.first = true;
+            object.second = new pair<Integer, Integer>();
+            object.second.first = Integer.MAX_VALUE;
+            object.second.second = Integer.MIN_VALUE;
+            return object;
+        }
+        pair<Boolean, pair<Integer, Integer>> leftBST = isBSToptimised(root.left);
+        pair<Boolean, pair<Integer, Integer>> rightBST = isBSToptimised(root.right);
+        int min = Math.min(root.data, Math.min(rightBST.second.first, leftBST.second.first));
+        int max = Math.max(root.data, Math.max(rightBST.second.second, leftBST.second.second));
+        boolean isBST = (root.data > leftBST.second.second && root.data <= rightBST.second.first && leftBST.first
+                && rightBST.first);
+        pair<Boolean, pair<Integer, Integer>> output = new pair<>();
+        output.first = isBST;
+        output.second = new pair<Integer, Integer>();
+        output.second.first = min;
+        output.second.second = max;
+        return output;
+    }
+
+    public static boolean isBST(BinaryTreeNode<Integer> root) {
+        if (root == null) {
+            return true;
+        }
+        int leftMax = leftMaximum(root.left);
+        int rightMin = rightMinimum(root.right);
+
+        return (root.data > leftMax && root.data < rightMin);
+
+    }
+
+    private static int leftMaximum(BinaryTreeNode<Integer> root) {
+        if (root == null) {
+            return 0;
+        }
+        return Math.max(root.data, Math.max(leftMaximum(root.left), leftMaximum(root.right)));
+
+    }
+
+    private static int rightMinimum(BinaryTreeNode<Integer> root) {
+        if (root == null) {
+            return Integer.MAX_VALUE;
+        }
+        return Math.min(root.data, Math.min(rightMinimum(root.left), rightMinimum(root.right)));
+    }
+
+    public static ArrayList<Integer> searchInRange(BinaryTreeNode<Integer> root, int low, int high) {
+        if (root == null) {
+            ArrayList<Integer> list = new ArrayList<>();
+            return list;
+        }
+        if (root.data > high) {
+            ArrayList<Integer> op1 = searchInRange(root.left, low, high);
+            return op1;
+        } else if (root.data >= low && root.data <= high) {
+            ArrayList<Integer> x = searchInRange(root.left, low, high);
+            ArrayList<Integer> y = searchInRange(root.right, low, high);
+            y.addAll(x);
+            y.add(root.data);
+            return y;
+        } else {
+            ArrayList<Integer> op3 = searchInRange(root.right, low, high);
+            return op3;
+        }
+
+    }
+
+    public static BinaryTreeNode<Integer> findElementInBST(BinaryTreeNode<Integer> root,
+            BinaryTreeNode<Integer> target) {
+        if (root == null) {
+            return null;
+        }
+        if (root.data == target.data) {
+            return root;
+        } else if (root.data < target.data) {
+            return findElementInBST(root.right, target);
+        } else {
+            return findElementInBST(root.left, target);
+        }
+
     }
 }
