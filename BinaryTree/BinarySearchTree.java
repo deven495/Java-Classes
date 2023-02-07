@@ -1,6 +1,7 @@
 package BinaryTree;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class BinarySearchTree {
     private BinaryTreeNode<Integer> root;
@@ -33,65 +34,68 @@ public class BinarySearchTree {
         return;
     }
 
-    public BinaryTreeNode<Integer> deleteNodeHelper(BinaryTreeNode<Integer> root, int target) {
+    private static BinaryTreeNode<Integer> deleteNodeHelper(BinaryTreeNode<Integer> root, int target) {
         if (root == null) {
             return null;
         }
-        if (root.data == target && root.left == null && root.right == null) {
-            return null;
-        } else if (root.data == target && root.left != null && root.right == null) {
-            return root.left;
-        } else if (root.data == target && root.left == null && root.right != null) {
-            return root.right;
-        } else if (root.data == target && root.left != null && root.right != null) {
-            int max = leftMaximum(root.left);
-            root.data = max;
-            root.left = deleteNodeHelper(root.left, max);
-            return root;
-
-        } else if (root.data > target) {
+        if (target < root.data) {
             root.left = deleteNodeHelper(root.left, target);
-        } else {
+        } else if (target > root.data) {
             root.right = deleteNodeHelper(root.right, target);
+        } else {
+            if (root.left == null && root.right == null) {
+                return null;
+            } else if (root.left != null && root.right == null) {
+                return root.left;
+            } else if (root.left == null && root.right != null) {
+                return root.right;
+            } else {
+                int min = rightMinimum(root.right);
+                root.data = min;
+                root.right = deleteNodeHelper(root.right, min);
+            }
         }
         return root;
     }
 
     public void insertNode(int target) {
-        insertNodeHelper(root, target);
+        root = insertNodeHelper(root, target);
         return;
     }
 
     private BinaryTreeNode<Integer> insertNodeHelper(BinaryTreeNode<Integer> root, int target) {
         if (root == null) {
-            BinaryTreeNode<Integer> newNode = new BinaryTreeNode<Integer>(target);
-            return newNode;
+            BinaryTreeNode<Integer> bt = new BinaryTreeNode<Integer>(target);
+            return bt;
         }
-        if (root.data > target) {
-            BinaryTreeNode<Integer> leftSe = insertNodeHelper(root.left, target);
-            root.left = leftSe;
-            return root;
+        if (target > root.data) {
+            root.right = insertNodeHelper(root.right, target);
         } else {
-            BinaryTreeNode<Integer> rightSe = insertNodeHelper(root.right, target);
-            root.right = rightSe;
-            return root;
+            root.left = insertNodeHelper(root.left, target);
         }
+        return root;
     }
 
-    public static void printBST(BinaryTreeNode<Integer> root) {
+    public void printBST() {
+        printBSTHelper(root);
+        return;
+    }
+
+    private static void printBSTHelper(BinaryTreeNode<Integer> root) {
         if (root == null) {
             return;
         }
-        String rootStr = root.data + ":";
+        String str = root.data + ": ";
         if (root.left != null) {
-            rootStr += "L" + root.left.data + ", ";
+            str += "L" + root.left.data + ", ";
         }
         if (root.right != null) {
-            rootStr += "R" + root.right.data + ", ";
+            str += "R" + root.right.data + ", ";
         }
-        System.out.println(rootStr);
-        printBST(root.left);
-        printBST(root.right);
+        System.out.println(str);
+        printBSTHelper(root.left);
+        printBSTHelper(root.right);
+
     }
 
     public static ArrayList<Integer> rootToNodePath(BinaryTreeNode<Integer> root, int target) {
@@ -145,14 +149,19 @@ public class BinarySearchTree {
         }
         int leftMax = leftMaximum(root.left);
         int rightMin = rightMinimum(root.right);
+        if (leftMax > root.data || rightMin < root.data) {
+            return false;
+        }
+        boolean leftBST = isBST(root.left);
+        boolean rightBST = isBST(root.right);
 
-        return (root.data > leftMax && root.data < rightMin);
+        return leftBST && rightBST;
 
     }
 
     private static int leftMaximum(BinaryTreeNode<Integer> root) {
         if (root == null) {
-            return 0;
+            return Integer.MIN_VALUE;
         }
         return Math.max(root.data, Math.max(leftMaximum(root.left), leftMaximum(root.right)));
 
@@ -200,4 +209,57 @@ public class BinarySearchTree {
         }
 
     }
+
+    public static BinaryTreeNode<Integer> makeBSTfromSortedArr(int arr[]) {
+        return makeBSThelper(arr, 0, arr.length - 1);
+    }
+
+    private static BinaryTreeNode<Integer> makeBSThelper(int[] arr, int start, int end) {
+        if (start > end) {
+            return null;
+        }
+        int midInd = (end + start + 1) / 2;
+        BinaryTreeNode<Integer> root = new BinaryTreeNode<Integer>(arr[midInd]);
+        BinaryTreeNode<Integer> left = makeBSThelper(arr, start, midInd - 1);
+        BinaryTreeNode<Integer> right = makeBSThelper(arr, midInd + 1, end);
+        root.left = left;
+        root.right = right;
+        return root;
+    }
+
+    public static boolean isBSToptimised2(BinaryTreeNode<Integer> root, int min, int max) {
+        if (root == null) {
+            return true;
+        }
+        if (root.data < min || root.data > max) {
+            return false;
+        }
+        boolean left = isBSToptimised2(root.left, min, root.data - 1);
+        boolean right = isBSToptimised2(root.right, root.data, max);
+        return left && right;
+    }
+
+    public static BinaryTreeNode<Integer> takeInputLevelWise2(boolean isRoot, int rootData, boolean isLeftChild) {
+        if (isRoot) {
+            System.out.print("Enter rootData : ");
+        } else {
+            if (isLeftChild) {
+                System.out.print("Enter LeftChild of " + rootData + " : ");
+            } else {
+                System.out.print("Enter RightChild of " + rootData + " : ");
+            }
+        }
+        Scanner sc = new Scanner(System.in);
+        int rootData1 = sc.nextInt();
+        if (rootData1 == -1) {
+            return null;
+        }
+        BinaryTreeNode<Integer> root = new BinaryTreeNode<Integer>(rootData1);
+        BinaryTreeNode<Integer> leftChild = takeInputLevelWise2(false, rootData1, true);
+        BinaryTreeNode<Integer> rightChild = takeInputLevelWise2(false, rootData1, false);
+        root.left = leftChild;
+        root.right = rightChild;
+        return root;
+    }
+
 }

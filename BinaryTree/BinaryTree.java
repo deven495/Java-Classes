@@ -1,5 +1,6 @@
 package BinaryTree;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -271,4 +272,25 @@ public class BinaryTree {
         return root;
     }
 
+    public static ArrayList<Integer> nodeToRootPath(BinaryTreeNode<Integer> root, int target) {
+        if (root == null) {
+            return null;
+        }
+        if (root.data == target) {
+            ArrayList<Integer> list = new ArrayList<>();
+            list.add(root.data);
+            return list;
+        }
+        ArrayList<Integer> left = nodeToRootPath(root.left, target);
+        if (left != null) {
+            left.add(root.data);
+            return left;
+        }
+        ArrayList<Integer> right = nodeToRootPath(root.right, target);
+        if (right != null) {
+            right.add(root.data);
+            return right;
+        }
+        return null;
+    }
 }
