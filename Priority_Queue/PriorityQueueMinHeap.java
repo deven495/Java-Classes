@@ -17,9 +17,9 @@ public class PriorityQueueMinHeap<T> {
         return heap.size();
     }
 
-    public T getMin() throws HeapEmptyException {
+    public T getMin() throws Exception {
         if (heap.size() == 0) {
-            throw new HeapEmptyException();
+            throw new Exception("Heap is Empty");
         }
         return heap.get(0).value;
     }
@@ -89,7 +89,7 @@ public class PriorityQueueMinHeap<T> {
             if (arr[childLeft] < arr[minIndex]) {
                 minIndex = childLeft;
             }
-            if (arr[childRight] < arr[minIndex]) {
+            if (childRight < size && arr[childRight] < arr[minIndex]) {
                 minIndex = childRight;
             }
             if (minIndex == parentIndex) {
@@ -111,9 +111,9 @@ public class PriorityQueueMinHeap<T> {
         int parentIndex = (childIndex - 1) / 2;
         while (childIndex > 0) {
             if (arr[parentIndex] > arr[childIndex]) {
-                int temp = arr[parentIndex];
-                arr[parentIndex] = arr[childIndex];
-                arr[childIndex] = temp;
+                int temp = arr[childIndex];
+                arr[childIndex] = arr[parentIndex];
+                arr[parentIndex] = temp;
                 childIndex = parentIndex;
                 parentIndex = (childIndex - 1) / 2;
             } else {
@@ -121,6 +121,16 @@ public class PriorityQueueMinHeap<T> {
             }
         }
 
+    }
+
+    public void heapSort(int arr[]) {
+        for (int i = 0; i < arr.length; i++) {
+            insertInPlace(arr, i);
+        }
+        for (int i = 0; i < arr.length; i++) {
+            int deletedEl = deleteMinInPlace(arr, arr.length - i);
+            arr[arr.length - i - 1] = deletedEl;
+        }
     }
 
 }
