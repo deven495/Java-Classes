@@ -33,15 +33,47 @@ public class BackTracking {
         }
     }
 
-    public static void coinChange(int denom[], int idx, int amount, String ans) {
+    public static void coinChangeCombinations(int denom[], int idx, int amount, String ans) {
         if (amount == 0) {
-            System.out.println(ans);
+            count++;
+            System.out.println(count + "-> " + ans);
             return;
         }
         if (amount < 0 || idx == denom.length) {
             return;
         }
-        coinChange(denom, idx, amount - denom[idx], ans + denom[idx]);
-        coinChange(denom, idx + 1, amount, ans);
+        coinChangeCombinations(denom, idx, amount - denom[idx], ans + denom[idx]);
+        coinChangeCombinations(denom, idx + 1, amount, ans);
+    }
+
+    public static void coinChangePermutations(int denom[], int idx, int amount, String ans) {
+        if (amount == 0) {
+            count++;
+            System.out.println(count + "-> " + ans);
+            return;
+        }
+        if (amount < 0 || idx == denom.length) {
+            return;
+        }
+        coinChangePermutations(denom, 0, amount - denom[idx], ans + denom[idx]);
+        coinChangePermutations(denom, idx + 1, amount, ans);
+    }
+
+    public static void queenCombinationsBoxRespect(boolean[] boxes, int qpsf, int tq, String ans, int lastBox) {
+        if (qpsf == tq) {
+            count++;
+            System.out.println(count + "-> " + ans);
+            return;
+        }
+        if (lastBox == boxes.length) {
+            return;
+        }
+
+        boxes[lastBox] = true;
+        queenCombinationsBoxRespect(boxes, qpsf + 1, tq, ans + "Box" + lastBox + " ", lastBox + 1);
+        boxes[lastBox] = false;
+
+        queenCombinationsBoxRespect(boxes, qpsf, tq, ans, lastBox + 1);
+
     }
 }
