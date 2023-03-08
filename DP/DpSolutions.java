@@ -80,7 +80,6 @@ public class DpSolutions {
         return dp[0][0];
     }
 
-    // 4.Cb Solution of Q4
     public static int LCS(String s1, String s2, int vtx1, int vtx2, int dp[][]) {
         if (s1.length() == vtx1 || s2.length() == vtx2) {
             return 0;
@@ -184,7 +183,7 @@ public class DpSolutions {
                 }
             }
         }
-        System.out.println(Arrays.deepToString(dp));
+        // System.out.println(Arrays.deepToString(dp));
         return dp[0][0];
     }
 
@@ -281,5 +280,284 @@ public class DpSolutions {
             }
         }
         return dp[0][n - 1];
+    }
+
+    public static int knapSackRec(int[] weight, int[] price, int capacity, int idx) {
+        if (idx == weight.length || capacity < weight[idx] || capacity == 0) {
+            return 0;
+        }
+
+        int notTaken = knapSackRec(weight, price, capacity, idx + 1);
+        int taken = knapSackRec(weight, price, capacity - weight[idx], idx + 1) + price[idx];
+
+        return Math.max(taken, notTaken);
+    }
+
+    public static int knapSackTD(int[] weight, int[] price, int capacity, int idx, int[][] dp) {
+        if (idx == weight.length || capacity < weight[idx] || capacity == 0) {
+            return 0;
+        }
+        if (dp[idx][capacity] != 0) {
+            return dp[idx][capacity];
+        }
+        int notTaken = knapSackTD(weight, price, capacity, idx + 1, dp);
+        int taken = knapSackTD(weight, price, capacity - weight[idx], idx + 1, dp) + price[idx];
+
+        return dp[idx][capacity] = Math.max(taken, notTaken);
+    }
+
+    public static int mixturesRec(int colors[], int si, int ei) {// 40 60 20 50
+        if (si == ei) {
+            return 0;
+        }
+        int minSmoke = Integer.MAX_VALUE;
+        for (int k = si; k < ei; k++) {
+            int fp = mixturesRec(colors, si, k);
+            int bp = mixturesRec(colors, k + 1, ei);
+            int sw = colorMixtureHelper(colors, si, k) * colorMixtureHelper(colors, k + 1, ei);
+            int total = fp + bp + sw;
+            minSmoke = Math.min(minSmoke, total);
+        }
+        return minSmoke;
+
+    }
+
+    public static int mixturesTD(int colors[], int si, int ei, int dp[][]) {// 40 60 20 50
+        if (si == ei) {
+            return 0;
+        }
+        if (dp[si][ei] != -1) {// smoke can be zero thats why use -1
+            return dp[si][ei];
+        }
+        int minSmoke = Integer.MAX_VALUE;
+        for (int k = si; k < ei; k++) {
+            int fp = mixturesTD(colors, si, k, dp);
+            int bp = mixturesTD(colors, k + 1, ei, dp);
+            int sw = colorMixtureHelper(colors, si, k) * colorMixtureHelper(colors, k + 1, ei);
+            int total = fp + bp + sw;
+            minSmoke = Math.min(minSmoke, total);
+        }
+        return dp[si][ei] = minSmoke;
+
+    }
+
+    public static int mixturesBU(int colors[]) {
+        int n = colors.length;
+        int dp[][] = new int[n][n];
+
+        for (int slide = 0; slide <= n - 1; slide++) {
+            for (int si = 0; si <= n - slide - 1; si++) {
+                int ei = si + slide;
+
+                if (si == ei) {
+                    dp[si][ei] = 0;
+                } else {
+                    int minSmoke = Integer.MAX_VALUE;
+                    for (int k = si; k < ei; k++) {
+                        int fp = dp[si][k];
+                        int bp = dp[k + 1][ei];
+                        int sw = colorMixtureHelper(colors, si, k) * colorMixtureHelper(colors, k + 1, ei);
+                        int total = fp + bp + sw;
+                        minSmoke = Math.min(minSmoke, total);
+                    }
+                    dp[si][ei] = minSmoke;
+                }
+            }
+        }
+        return dp[0][n - 1];
+    }
+
+    private static int colorMixtureHelper(int arr[], int si, int ei) {
+
+        int sum = 0;
+        for (int i = si; i <= ei; i++) {
+            sum += arr[i];
+        }
+        return sum % 100;
+    }
+
+    public static int rodCuttingRec(int rods[], int idx) {// {0,3,5,8,9,10,17,17,20}
+        int max = rods[idx];
+        int left = 1;
+        int right = idx - 1;
+        while (left <= right) {
+            int fp = rodCuttingRec(rods, left);
+            int bp = rodCuttingRec(rods, right);
+            int total = fp + bp;
+            max = Math.max(max, total);
+            left++;
+            right--;
+        }
+        return max;
+    }
+
+    public static int rodCuttingRec2(int rods[], int length) {//
+        // {0,3,5,8,9,10,17,17,20}
+        if (length == 1) {
+            return rods[1];
+        }
+        if (length == 0) {
+            return 0;
+        }
+        int max = rods[length];
+        for (int i = 1; i < length; i++) {
+            int fp = rodCuttingRec2(rods, i);
+            int bp = rodCuttingRec2(rods, length - i);
+            int total = fp + bp;
+            max = Math.max(max, total);
+        }
+        return max;
+    }
+
+    private static boolean isPaliHelper(String str, int si, int ei) {
+        int l = si;
+        int r = ei;
+        while (l <= r) {
+            if (str.charAt(l) != str.charAt(r)) {
+                return false;
+            }
+            l++;
+            r--;
+        }
+        return true;
+    }
+
+    public static int palindromicPartioning(String str, int si, int ei) {// some error in the code
+        if (isPaliHelper(str, si, ei)) {
+            return 0;
+        }
+        int min = Integer.MAX_VALUE;
+        for (int i = si; i < ei; i++) {
+            int fp = palindromicPartioning(str, si, i);
+            int bp = palindromicPartioning(str, i + 1, ei);
+            min = Math.min(min, fp + bp + 1);
+        }
+        return min;
+    }
+
+    public static boolean[][] palli(String str) {
+        boolean[][] palliChachu = new boolean[str.length()][str.length()];
+        for (boolean[] x : palliChachu) {
+            Arrays.fill(x, true);
+        }
+        for (int row = str.length() - 2; row >= 0; row--) {
+            for (int col = row + 1; col < str.length(); col++) {
+                if (str.charAt(row) == str.charAt(col)) {
+                    palliChachu[row][col] = palliChachu[row + 1][col - 1];
+                } else {
+                    palliChachu[row][col] = false;
+                }
+            }
+        }
+        return palliChachu;
+    }
+
+    public static int partyBU(String str) {
+        int dp[][] = new int[str.length()][str.length()];
+        boolean[][] palliChachu = palli(str);
+        for (int k = 0; k <= str.length() - 1; k++) {
+            for (int si = 0; si <= str.length() - k - 1; si++) {
+                int ei = si + k;
+                if (palliChachu[si][ei]) {
+                    dp[si][ei] = 0;
+                } else {
+                    int min = Integer.MAX_VALUE;
+                    for (int i = si; i < ei; i++) {
+                        int fp = dp[si][i];
+                        int bp = dp[i + 1][ei];
+                        min = Math.min(min, fp + bp + 1);
+                    }
+                    dp[si][ei] = min;
+                }
+            }
+        }
+        return dp[0][str.length() - 1];
+    }
+
+    public static int LPSTD(String str, int si, int ei, int dp[][]) {
+        if (si > ei) {
+            return 0;
+        }
+        if (si == ei) {
+            return 1;
+        }
+        if (dp[si][ei] != 0) {
+            return dp[si][ei];
+        }
+        int ans = 0;
+        if (str.charAt(si) == str.charAt(ei)) {
+            ans = LPSTD(str, si + 1, ei - 1, dp) + 2;
+        } else {
+            int op1 = LPSTD(str, si + 1, ei, dp);
+            int op2 = LPSTD(str, si, ei - 1, dp);
+            ans = Math.max(op1, op2);
+        }
+        return dp[si][ei] = ans;
+    }
+
+    public static int LPSBU(String str) {
+        int n = str.length();
+        int dp[][] = new int[n][n];
+
+        for (int slide = 0; slide < n; slide++) {
+            for (int si = 0; si < n - slide; si++) {
+                int ei = si + slide;
+                if (si == ei) {
+                    dp[si][ei] = 1;
+                } else {
+                    int ans = 0;
+                    if (str.charAt(si) == str.charAt(ei)) {
+                        ans = dp[si + 1][ei - 1] + 2;
+                    } else {
+                        int op1 = dp[si + 1][ei];
+                        int op2 = dp[si][ei - 1];
+                        ans = Math.max(op1, op2);
+                    }
+                    dp[si][ei] = ans;
+                }
+
+            }
+        }
+        return dp[0][n - 1];
+    }
+
+    public static int kOrderedLCS(String str1, String str2, int k, int i, int j, int[][][] dp) {
+        if (str1.length() == i || str2.length() == j) {
+            return 0;
+        }
+        if (dp[k][i][j] != 0) {
+            return dp[k][i][j];
+        }
+        int ans = 0;
+        if (str1.charAt(i) == str2.charAt(j)) {
+            ans = kOrderedLCS(str1, str2, k, i + 1, j + 1, dp) + 1;
+        } else {
+            int op1 = kOrderedLCS(str1, str2, k, i + 1, j, dp);
+            int op2 = kOrderedLCS(str1, str2, k, i, j + 1, dp);
+            int op3 = 0;
+            if (k > 0)
+                op3 = kOrderedLCS(str1, str2, k - 1, i + 1, j + 1, dp) + 1;
+            ans = Math.max(op1, Math.max(op2, op3));
+        }
+        return dp[k][i][j] = ans;
+    }
+
+    public static int LCSin3Strings(String str1, String str2, String str3, int i, int j, int k, int dp[][][]) {
+        if (str1.length() == i || str2.length() == j || str3.length() == k) {
+            return 0;
+        }
+        if (dp[i][j][k] != 0) {
+            return dp[i][j][k];
+        }
+        int ans;
+        if (str1.charAt(i) == str2.charAt(j) && str2.charAt(j) == str3.charAt(k)) {
+            ans = LCSin3Strings(str1, str2, str3, i + 1, j + 1, k + 1, dp) + 1;
+        } else {
+            int op1 = LCSin3Strings(str1, str2, str3, i + 1, j, k, dp);
+            int op2 = LCSin3Strings(str1, str2, str3, i, j + 1, k, dp);
+            int op3 = LCSin3Strings(str1, str2, str3, i, j, k + 1, dp);
+            ans = Math.max(op1, Math.max(op2, op3));
+        }
+        return dp[i][j][k] = ans;
     }
 }
